@@ -10,7 +10,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 public class Admin extends LumExpressUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

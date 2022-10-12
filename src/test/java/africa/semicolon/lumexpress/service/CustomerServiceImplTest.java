@@ -1,12 +1,15 @@
 package africa.semicolon.lumexpress.service;
 
 import africa.semicolon.lumexpress.data.dto.request.CustomerRegistrationRequest;
+import africa.semicolon.lumexpress.data.dto.request.LoginRequest;
 import africa.semicolon.lumexpress.data.dto.response.CustomerRegistrationResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.FileNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +25,7 @@ class CustomerServiceImplTest {
     void setUp() {
         request = CustomerRegistrationRequest
                 .builder()
-                .email("test@gmail.com")
+                .email("roseadeyinka01@gmail.com")
                 .password("test Password")
                 .country("Nigeria")
                 .build();
@@ -33,7 +36,7 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void register() {
+    void register() throws FileNotFoundException {
         CustomerRegistrationResponse customerRegistrationResponse=
                 customerService.register(request);
         assertThat(customerRegistrationResponse).isNotNull();
@@ -46,7 +49,8 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void login() {
+    void loginCustomerTest() {
+
     }
 
     @Test

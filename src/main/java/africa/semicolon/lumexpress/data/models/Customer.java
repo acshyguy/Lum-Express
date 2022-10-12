@@ -12,7 +12,6 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @ToString
 public class Customer extends LumExpressUser {
     @Id
@@ -24,4 +23,5 @@ public class Customer extends LumExpressUser {
     @OneToMany(fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.PERSIST)
     private Set<Address> addresses = new HashSet<>();
+
 }

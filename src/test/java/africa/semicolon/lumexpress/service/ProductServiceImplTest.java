@@ -6,6 +6,14 @@ import africa.semicolon.lumexpress.data.dto.request.UpdateProductRequest;
 import africa.semicolon.lumexpress.data.dto.response.AddProductResponse;
 import africa.semicolon.lumexpress.data.dto.response.UpdateProductResponse;
 import africa.semicolon.lumexpress.data.models.Product;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jackson.jsonpointer.JsonPointer;
+import com.github.fge.jackson.jsonpointer.JsonPointerException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+import com.github.fge.jsonpatch.ReplaceOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +28,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,13 +44,13 @@ class ProductServiceImplTest {
     @BeforeEach
     void setUp() throws IOException {
         Path path = Paths
-                .get("/home/semicolon/Pictures/peak.jpg");
+                .get("/home/rose/Pictures/goldenmorn.jpeg");
 
         MultipartFile file =
                 new MockMultipartFile("peak",
                         Files.readAllBytes(path));
         request = buildAddProductRequest(file);
-        response = productService.addProduct(request);
+//        response = productService.addProduct(request);
     }
 
 
@@ -55,13 +64,38 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void updateProductDetailsTest() {
-        UpdateProductRequest updateRequest = buildUpdateRequest();
+    void updateProductDetailsNameTest() throws JsonPointerException, IOException, JsonPatchException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode value = mapper.readTree("\"eggs\"");
+        JsonPatch patch = new JsonPatch(List.of(new ReplaceOperation
+                (new JsonPointer("/name"), value)));
         UpdateProductResponse updateResponse =
-                productService.updateProductDetails(updateRequest);
+                productService.updateProductDetails(1L, patch);
         assertThat(updateResponse).isNotNull();
         assertThat(updateResponse.getStatusCode())
-                .isEqualTo(201);
+                .isEqualTo(200);
+        assertThat(productService.getProductById(1L).getName())
+                .isEqualTo("eggs");
+    }
+
+    @Test
+    void updateProductPriceDetailsTest() throws JsonPointerException, IOException{
+        ObjectMapper mapper = new ObjectMapper();
+        UpdateProductResponse updateResponse=null;
+        try {
+            JsonNode value = mapper.readTree("50.00");
+            JsonPatch patch = new JsonPatch(List.of(new ReplaceOperation
+                    (new JsonPointer("/price"), value)));
+            updateResponse =
+                    productService.updateProductDetails(1L, patch);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        assertThat(updateResponse).isNotNull();
+        assertThat(updateResponse.getStatusCode())
+                .isEqualTo(200);
+        assertThat(productService.getProductById(1L).getName())
+                .isEqualTo("Milk");
     }
 
     @Test
