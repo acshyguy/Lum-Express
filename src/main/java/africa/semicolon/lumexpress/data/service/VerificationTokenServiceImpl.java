@@ -1,15 +1,13 @@
-package africa.semicolon.lumexpress.service;
+package africa.semicolon.lumexpress.data.service;
 
 import africa.semicolon.lumexpress.data.models.VerificationToken;
 import africa.semicolon.lumexpress.data.repositories.VerificationTokenRepository;
 import africa.semicolon.lumexpress.exception.VerificationTokenException;
 import africa.semicolon.lumexpress.util.LumExpressUtils;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

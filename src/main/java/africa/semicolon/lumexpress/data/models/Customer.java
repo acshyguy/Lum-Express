@@ -2,6 +2,7 @@ package africa.semicolon.lumexpress.data.models;
 
 import lombok.*;
 import org.hibernate.annotations.Cascade;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Component
 public class Customer extends LumExpressUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

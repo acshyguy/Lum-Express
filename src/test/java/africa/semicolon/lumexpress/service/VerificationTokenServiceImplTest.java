@@ -1,6 +1,7 @@
 package africa.semicolon.lumexpress.service;
 
 import africa.semicolon.lumexpress.data.models.VerificationToken;
+import africa.semicolon.lumexpress.data.service.VerificationTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

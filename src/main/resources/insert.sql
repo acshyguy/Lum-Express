@@ -1,1 +1,0 @@
-insert into user values (500L, 'roseadeyinka01@gmail.com', 'Jummie', NULL, 'Lois', 'password',NULL )

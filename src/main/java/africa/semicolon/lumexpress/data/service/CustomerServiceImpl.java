@@ -1,17 +1,16 @@
-package africa.semicolon.lumexpress.service;
+package africa.semicolon.lumexpress.data.service;
 
 import africa.semicolon.lumexpress.data.dto.request.CustomerRegistrationRequest;
 import africa.semicolon.lumexpress.data.dto.request.EmailNotificationRequest;
-import africa.semicolon.lumexpress.data.dto.request.LoginRequest;
 import africa.semicolon.lumexpress.data.dto.request.UpdateCustomerDetails;
 import africa.semicolon.lumexpress.data.dto.response.CustomerRegistrationResponse;
-import africa.semicolon.lumexpress.data.dto.response.LoginResponse;
 import africa.semicolon.lumexpress.data.models.Address;
 import africa.semicolon.lumexpress.data.models.Cart;
 import africa.semicolon.lumexpress.data.models.Customer;
 import africa.semicolon.lumexpress.data.models.VerificationToken;
 import africa.semicolon.lumexpress.data.repositories.CustomerRepository;
-import africa.semicolon.lumexpress.service.notification.EmailNotificationService;
+import africa.semicolon.lumexpress.data.service.notification.EmailNotificationService;
+import africa.semicolon.lumexpress.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -21,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,16 +41,19 @@ public class CustomerServiceImpl implements CustomerService{
         Customer savedCustomer = customerRepository.save(customer);
         log.info("customer to be saved in db::{}", savedCustomer);
         VerificationToken token =verificationTokenService.createToken(savedCustomer.getEmail());
-        emailNotificationService.sendHtmlMail(buildEMailNotificationRequest(token));
+        emailNotificationService.sendHtmlMail(buildEMailNotificationRequest(token,
+                savedCustomer.getFirstName()));
         return registrationResponseBuilder(savedCustomer);
     }
 
-    private EmailNotificationRequest buildEMailNotificationRequest(VerificationToken verificationToken) throws FileNotFoundException {
+    private EmailNotificationRequest buildEMailNotificationRequest(VerificationToken verificationToken, String customerName) throws FileNotFoundException {
+        String messageN= getEmailTemplate();
         String email = getEmailTemplate();
         String mail = null;
         if (email != null){
-            mail = String.format(email, verificationToken.getUserEmail(),
-            "http://localhost:8080/api/v1/customer/verify"+verificationToken.getToken());
+            var verificationUrl = "http://localhost:8080/api/v1/customer/verify/"+verificationToken.getToken();
+            mail = String.format(email, customerName, verificationUrl);
+            log.info("mailed url -> {}", verificationUrl);
         }
         return EmailNotificationRequest.builder()
                 .userEmail(verificationToken.getUserEmail())
@@ -83,7 +87,34 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
         @Override
-    public String completeProfile(UpdateCustomerDetails updateCustomerDetails) {
-        return null;
+    public String updateCustomerProfile(UpdateCustomerDetails updateCustomerDetails) {
+        Customer customerUpdate = getCustomer(updateCustomerDetails);
+        log.info("before update -> {}", customerUpdate);
+        mapper.map(updateCustomerDetails, customerUpdate);
+        log.info("updated guy -> {}", customerUpdate);
+        Set<Address> customerAddressList =
+                customerUpdate.getAddresses();
+        log.info("addresses{}");
+        Optional<Address> foundAddress = customerAddressList.stream()
+                .findFirst();
+        if (foundAddress.isPresent()) applyAddressUpdate(foundAddress.get(), updateCustomerDetails);
+        customerUpdate.getAddresses().add(foundAddress.get());
+        Customer updatedCustomer = customerRepository.save(customerUpdate);
+        return String.format("%s details updated successfully", updatedCustomer.getFirstName());
     }
+
+    private void applyAddressUpdate(Address address, UpdateCustomerDetails updateCustomerDetails) {
+        address.setBuildingNumber(updateCustomerDetails.getBuildingNumber());
+        address.setCity(updateCustomerDetails.getCity());
+        address.setStreet(updateCustomerDetails.getStreet());
+        address.setState(updateCustomerDetails.getState());
+    }
+
+    private Customer getCustomer(UpdateCustomerDetails updateCustomerDetails) {
+        return customerRepository.findById(updateCustomerDetails.getCustomerId())
+                .orElseThrow(() -> new UserNotFoundException(String.format("customer with id %d, not found",
+                        updateCustomerDetails.getCustomerId())));
+    }
+
+
 }

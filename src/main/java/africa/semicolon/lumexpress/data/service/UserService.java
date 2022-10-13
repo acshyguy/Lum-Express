@@ -1,4 +1,4 @@
-package africa.semicolon.lumexpress.service;
+package africa.semicolon.lumexpress.data.service;
 
 import africa.semicolon.lumexpress.data.dto.request.LoginRequest;
 import africa.semicolon.lumexpress.data.dto.response.LoginResponse;

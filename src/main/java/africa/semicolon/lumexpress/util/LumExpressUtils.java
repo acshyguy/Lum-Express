@@ -8,4 +8,8 @@ public class LumExpressUtils {
         int number = secureRandom.nextInt(89999);
         return String.valueOf(10000+number);
     }
+
+    public static String getMockCloudinaryImageUrl(){
+        return "https://www.cloudinary.com/abcd";
+    }
 }

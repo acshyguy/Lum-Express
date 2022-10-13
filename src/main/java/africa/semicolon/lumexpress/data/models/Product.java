@@ -19,7 +19,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private double price;
+    private BigDecimal price;
     private int quantity;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Category> categories =new ArrayList<>();

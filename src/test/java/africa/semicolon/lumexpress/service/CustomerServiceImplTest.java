@@ -1,8 +1,10 @@
 package africa.semicolon.lumexpress.service;
 
 import africa.semicolon.lumexpress.data.dto.request.CustomerRegistrationRequest;
-import africa.semicolon.lumexpress.data.dto.request.LoginRequest;
+import africa.semicolon.lumexpress.data.dto.request.UpdateCustomerDetails;
 import africa.semicolon.lumexpress.data.dto.response.CustomerRegistrationResponse;
+import africa.semicolon.lumexpress.data.service.CustomerService;
+import africa.semicolon.lumexpress.util.LumExpressUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.FileNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CustomerServiceImplTest {
@@ -50,10 +51,24 @@ class CustomerServiceImplTest {
 
     @Test
     void loginCustomerTest() {
-
     }
 
     @Test
-    void completeProfile() {
+    void updateProfile() throws FileNotFoundException {
+        CustomerRegistrationResponse customerRegistrationResponse=
+                customerService.register(request);
+        UpdateCustomerDetails details = UpdateCustomerDetails
+                .builder()
+                .customerId(customerRegistrationResponse.getUserId())
+                .imageUrl(LumExpressUtils.getMockCloudinaryImageUrl())
+                .lastName("testLastName")
+                .city("Lagos")
+                .street("Herbert Macaulay")
+                .buildingNumber(312)
+                .phoneNumber("09012345678")
+                .build();
+        String updateResponse = customerService.updateCustomerProfile(details);
+        assertThat(updateResponse).isNotNull();
+        assertThat(updateResponse.contains("success")).isTrue();
     }
 }

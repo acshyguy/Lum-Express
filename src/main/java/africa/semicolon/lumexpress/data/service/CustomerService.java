@@ -1,4 +1,4 @@
-package africa.semicolon.lumexpress.service;
+package africa.semicolon.lumexpress.data.service;
 
 import africa.semicolon.lumexpress.data.dto.request.CustomerRegistrationRequest;
 import africa.semicolon.lumexpress.data.dto.request.LoginRequest;
@@ -10,5 +10,6 @@ import java.io.FileNotFoundException;
 
 public interface CustomerService {
     CustomerRegistrationResponse register(CustomerRegistrationRequest registerRequest) throws FileNotFoundException;
-    String completeProfile(UpdateCustomerDetails updateCustomerDetails);
+
+    String updateCustomerProfile(UpdateCustomerDetails updateCustomerDetails);
 }

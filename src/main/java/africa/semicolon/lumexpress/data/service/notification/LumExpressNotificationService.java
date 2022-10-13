@@ -1,4 +1,4 @@
-package africa.semicolon.lumexpress.service.notification;
+package africa.semicolon.lumexpress.data.service.notification;
 
 import africa.semicolon.lumexpress.data.dto.request.NotificationRequest;
 
